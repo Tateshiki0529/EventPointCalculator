@@ -99,7 +99,7 @@
 	<body>
 		<header>
 			<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-				<a class="navbar-brand" href="#">ガラクタツール置き場</a>
+				<a class="navbar-brand" href="#">イベントポイント計算機</a>
 				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>
 				</button>
@@ -107,16 +107,22 @@
 				<div class="collapse navbar-collapse" id="navbarColor02">
 					<ul class="navbar-nav mr-auto">
 						<li class="nav-item">
-							<a class="nav-link" href="#banner">イベントポイント計算機</a>
+							<a class="nav-link" href="#banner"><i class="fas fa-home"></i> イベントポイント計算機</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="#usage">使い方</a>
+							<a class="nav-link" href="#usage"><i class="fas fa-book-open"></i> 使い方</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="#form">計算フォーム</a>
+							<a class="nav-link" href="#form"><i class="fas fa-calculator"></i> 計算フォーム</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="#formula">計算式</a>
+							<a class="nav-link" href="#formula"><i class="fas fa-pen-alt"></i> 計算式</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="https://twitter.com/@T_BanGDreamer" target="_blank"><i class="fab fa-twitter"></i> 開発者Twitter <i class="fas fa-external-link-alt"></i></a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="https://github.com/Tateshiki0529/EventPointCalculator" target="_blank"><i class="fab fa-github"></i> GitHub <i class="fas fa-external-link-alt"></i></a>
 						</li>
 					</ul>
 				</div>
@@ -157,7 +163,7 @@
 						<hr>
 						<div class="form-inline mb-5">
 							<label for="challenge_Point" class="d-inline">欲しいイベントポイント数($p$):&nbsp;</label>
-							<input type="number" id="challenge_Point" placeholder="300" class="form-control" onChange="JavaScript:calc('challenge');" />
+							<input type="number" id="challenge_Point" placeholder="300" class="form-control" onKeyUp="JavaScript:calc('challenge');" inputmode="numeric" pattern="[0-9]+" min="0" />
 						</div>
 						<div class="form-inline mt-5">
 							<label for="challenge_Result" class="d-inline">獲得すべきライブスコア($S$):&nbsp;</label>
@@ -168,7 +174,7 @@
 						<hr>
 						<div class="form-inline mb-5">
 							<label for="versus_Point" class="d-inline">欲しいイベントポイント数($p$):&nbsp;</label>
-							<input type="number" id="versus_Point" placeholder="300" class="form-control" onChange="JavaScript:calc('versus');" />
+							<input type="number" id="versus_Point" placeholder="300" class="form-control" onKeyUp="JavaScript:calc('versus');" inputmode="numeric" pattern="[0-9]+" min="0" />
 						</div>
 						<div class="form-inline m-2 border border-primary rounded p-3">
 							<label for="versus_ParticipatePlayerCount">参加人数:&nbsp;</label>
@@ -198,7 +204,7 @@
 						<hr>
 						<div class="form-inline mb-5">
 							<label for="try_Point" class="d-inline">欲しいイベントポイント数($p$):&nbsp;</label>
-							<input type="number" id="try_Point" placeholder="300" class="form-control" onChange="JavaScript:calc('try');" />
+							<input type="number" id="try_Point" placeholder="300" class="form-control" onKeyUp="JavaScript:calc('try');" inputmode="numeric" pattern="[0-9]+" min="0" />
 						</div>
 						<div class="form-inline mt-5">
 							<label for="try_Result" class="d-inline">獲得すべきライブスコア($S$):&nbsp;</label>
@@ -209,11 +215,11 @@
 						<hr>
 						<div class="form-inline mb-5">
 							<label for="mission_Point" class="d-inline">欲しいイベントポイント数($p$):&nbsp;</label>
-							<input type="number" id="mission_Point" placeholder="300" class="form-control" onChange="JavaScript:calc('mission');" />
+							<input type="number" id="mission_Point" placeholder="300" class="form-control" onKeyUp="JavaScript:calc('mission');" inputmode="numeric" pattern="[0-9]+" min="0" />
 						</div>
 						<div class="form-inline m-2 border border-primary rounded p-3">
 							<label for="mission_SBPower" class="d-inline">サポートバンド総合力($P$):&nbsp;</label>
-							<input type="number" id="mission_SBPower" placeholder="200000" class="form-control" onChange="JavaScript:calc('mission');" />
+							<input type="number" id="mission_SBPower" placeholder="200000" class="form-control" onKeyUp="JavaScript:calc('mission');" inputmode="numeric" pattern="[0-9]+" min="0" />
 						</div>
 						<div class="form-inline mt-5">
 							<label for="mission_Result" class="d-inline">獲得すべきライブスコア($S$):&nbsp;</label>
@@ -233,9 +239,7 @@
 						<h4>チャレンジライブイベント</h4>
 						<p>
 							\[
-								S=(p-20)\times25000\\
-								&darr;\\
-								p=\lfloor\frac{S}{25000}\rfloor+20
+								S=(p-20)\times25000
 							\]
 							$S$ … 獲得すべきライブスコア<br>
 							$p$ … 欲しいイベントポイント<br><br>
@@ -246,9 +250,7 @@
 						<h4>対バンライブイベント</h4>
 						<p>
 							\[
-								S=(p-C)\times5500\\
-								&darr;\\
-								p=\lfloor\frac{S}{5500}\rfloor+C
+								S=(p-C)\times5500
 							\]
 							$S$ … 獲得すべきライブスコア<br>
 							$p$ … 欲しいイベントポイント<br>
@@ -292,9 +294,7 @@
 						<h4>ライブトライ！イベント</h4>
 						<p>
 							\[
-								S=(p-40)\times13000\\
-								&darr;\\
-								p=\lfloor\frac{S}{13000}\rfloor+40
+								S=(p-40)\times13000
 							\]
 							$S$ … 獲得すべきライブスコア<br>
 							$p$ … 欲しいイベントポイント<br><br>
@@ -305,9 +305,7 @@
 						<h4>ミッションライブイベント</h4>
 						<p>
 							\[
-								S=\{p-40-\lfloor(P\div3000)\rfloor\}\times10000\\
-								&darr;\\
-								p=\lfloor\frac{S}{10000}\rfloor+\lfloor P\div3000\rfloor+40
+								S=\{p-40-\lfloor P\div3000\rfloor\}\times10000
 							\]
 							$S$ … 獲得すべきライブスコア<br>
 							$p$ … 欲しいイベントポイント<br>
@@ -322,6 +320,7 @@
 		<div id="page_top"><a href="#"></a></div>
 		<footer class="bg-dark text-center mt-3 p-3">
 			<small class="text-light">Copyright &copy; <script>start=2021;if(new Date().getFullYear()==start){document.write("2021");}else{document.write("2021-"+new Date().getFullYear());}</script> <a target="_blank" href="https://ttsk3.net/">Tateshiki0529</a>.</small>
+			<!--タグはここから--><table border="0" cellspacing="0" cellpadding="0" style="margin-left: auto;margin-right: auto;"><tr><td align="center"><a href="http://www.rays-counter.com/"><img src="http://www.rays-counter.com/d480_f6_028/6043d509817ed/" alt="アクセスカウンター" border="0"></a></td></tr><tr><td align="center"><img src="http://www.rays-counter.com/images/counter_01.gif" border="0"><img src="http://www.rays-counter.com/images/counter_02.gif" border="0"><img src="http://www.rays-counter.com/images/counter_03.gif" border="0" alt=""><img src="http://www.rays-counter.com/images/counter_04.gif" border="0"><img src="http://www.rays-counter.com/images/counter_05.gif" border="0" ></td></tr></table><!--ここまで-->
 		</footer>
 
 		<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
@@ -362,35 +361,34 @@
 						var point = parseInt($("#challenge_Point").val());
 						var result = (point - 20) * 25000;
 						if(result + 24999 <= 0) {
-							$("#challenge_Result").val("調整不可 (必要pt: "+result+" ～ "+(result+24999)+")");
+							$("#challenge_Result").val("調整不可 (必要pt: "+result.toLocaleString()+" ～ "+(result+24999).toLocaleString()+")");
 						} else if(isNaN(result)) {
 							$("#challenge_Result").val("入力が不足しています");
 						} else {
-							$("#challenge_Result").val(result+" ～ "+(result+24999));
+							$("#challenge_Result").val(result.toLocaleString()+" ～ "+(result+24999).toLocaleString());
 						}
 						break;
 					case "versus":
 						var point = parseInt($("#versus_Point").val());
 						var contributePoint = parseInt($("#versus_ContributePoint").val());
 						var result = (point - contributePoint) * 5500;
-						console.log(String(point)+", "+String(contributePoint)+", "+String(result))
 						if(result + 5499 <= 0) {
-							$("#versus_Result").val("調整不可 (必要pt: "+result+" ～ "+(result+5499)+")");
+							$("#versus_Result").val("調整不可 (必要pt: "+result.toLocaleString()+" ～ "+(result+5499).toLocaleString()+")");
 						} else if(isNaN(result)) {
 							$("#versus_Result").val("入力が不足しています");
 						} else {
-							$("#versus_Result").val(result+" ～ "+(result+5499));
+							$("#versus_Result").val(result.toLocaleString()+" ～ "+(result+5499).toLocaleString());
 						}
 						break;
 					case "try":
 						var point = parseInt($("#try_Point").val());
 						var result = (point - 40) * 13000;
 						if(result + 12999 <= 0) {
-							$("#try_Result").val("調整不可 (必要pt: "+result+" ～ "+(result+12999)+")");
+							$("#try_Result").val("調整不可 (必要pt: "+result.toLocaleString()+" ～ "+(result+12999).toLocaleString()+")");
 						} else if(isNaN(result)) {
 							$("#try_Result").val("入力が不足しています");
 						} else {
-							$("#try_Result").val(result+" ～ "+(result+12999));
+							$("#try_Result").val(result.toLocaleString()+" ～ "+(result+12999).toLocaleString());
 						}
 						break;
 					case "mission":
@@ -398,11 +396,11 @@
 						var power = parseInt($("#mission_SBPower").val());
 						var result = (point - 40 - Math.floor(power / 3000)) * 10000;
 						if(result + 9999 <= 0) {
-							$("#mission_Result").val("調整不可 (必要pt: "+result+" ～ "+(result+9999)+")");
+							$("#mission_Result").val("調整不可 (必要pt: "+result.toLocaleString()+" ～ "+(result+9999).toLocaleString()+")");
 						} else if(isNaN(result)) {
 							$("#mission_Result").val("入力が不足しています");
 						} else {
-							$("#mission_Result").val(result+" ～ "+(result+9999));
+							$("#mission_Result").val(result.toLocaleString()+" ～ "+(result+9999).toLocaleString());
 						}
 						break;
 				}
