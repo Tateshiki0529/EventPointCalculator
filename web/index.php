@@ -124,6 +124,9 @@
 						<li class="nav-item">
 							<a class="nav-link" href="https://github.com/Tateshiki0529/EventPointCalculator" target="_blank"><i class="fab fa-github"></i> GitHub <i class="fas fa-external-link-alt"></i></a>
 						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="https://ttsk3.net/594" target="_blank"><i class="fas fa-file-alt"></i> ブログ記事(更新履歴) <i class="fas fa-external-link-alt"></i></a>
+						</li>
 					</ul>
 				</div>
 			</nav>
