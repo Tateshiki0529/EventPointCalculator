@@ -2,6 +2,9 @@
 # EventPointCalculator
 ガルパのイベントポイントを計算する。
 # 更新履歴
+- 2021/03/07 v1.4.0(Commit: [cc50d8c](https://github.com/Tateshiki0529/EventPointCalculator/commit/cc50d8cb5857d00d7353a382cd37c3905d84e332))
+	- イベントポイントを小分けにして数回に分けて調節できるように機能を追加(Beta)
+		- #2 より(自問自答やめい)。Issueってまるでメモ帳のように…()
 - 2021/03/07 v1.2.0(Commit: [18aef03](https://github.com/Tateshiki0529/EventPointCalculator/commit/18aef03dceafa07b7c8123c55f469f5b252fa59e))
 	- イベント期間中…自動選択するように調整 <- 「イベント期間中」->「イベント開始日の11時20分～イベント終了まで」に変更 (web/index.php:100)
 		- アプリ内DLがこの時間帯で入るためです。あとはBestdori等のリーク情報が公開される時間でもあるため… 
