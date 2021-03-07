@@ -1,3 +1,10 @@
+<?php
+	$eventUrl = "https://bandori.party/api/events/";
+	$accessDate = date("Y/m/d H:i:s");
+	$eventData = json_decode(file_get_contents($eventUrl), true);
+	$latestEvent = $eventData["results"][0];
+	$eventTypeActive = "";
+?>
 <html>
 	<head>
 		<meta charset="UTF-8">
@@ -72,14 +79,37 @@
 				</div>
 				<div class="col-sm-6 border border-dark rounded p-3">
 					<h2 id="form">計算フォーム</h2>
+					<?php if(isset($latestEvent)): ?>
+						<p class="alert-primary p-3 rounded">
+							<i class="far fa-check-circle"></i> 最新イベント情報取得に成功(<?=$accessDate;?>)。<br><br>
+							イベントタイトル: <?=$latestEvent["japanese_name"];?><br>
+							<?php
+								$startDate = Datetime::createFromFormat(DateTime::ATOM, $latestEvent["start_date"])->setTimezone(new DateTimeZone("Asia/Tokyo"));
+								$endDate = Datetime::createFromFormat(DateTime::ATOM, $latestEvent["end_date"])->setTimezone(new DateTimeZone("Asia/Tokyo"));
+								$eventTypeActive = $latestEvent["i_type"];
+								$eventTypeList = [
+									"challenge_live" => "チャレンジライブイベント",
+									"vs_live" => "対バンライブイベント",
+									"live_goals" => "ライブトライ！イベント",
+									"mission_live" => "ミッションライブイベント"
+								];
+							?>
+							イベント期間: <?=$startDate->format("Y/m/d H:i:s");?> ～ <?=$endDate->format("Y/m/d H:i:s");?><br>
+							イベントタイプ: <?=$eventTypeList[$eventTypeActive];?>
+							<?php if (strtotime($startDate->format("Y/m/d H:i:s")) > time()) {
+								$eventTypeActive = "";
+								echo "<br><br>(イベント開催時には種別が自動選択されます)";
+							} ?>
+						</p>
+					<?php endif; ?>
 					<div class="form-inline">
 						<label for="eventType">イベント種別:&nbsp;</label>
 						<select id="eventType" class="form-control" onChange="JavaScript:selectType();">
-							<option value="" selected disabled>-- 選択してください --</option>
-							<option value="challenge">チャレンジライブイベント</option>
-							<option value="versus">対バンライブイベント</option>
-							<option value="try">ライブトライ！イベント</option>
-							<option value="mission">ミッションライブイベント</option>
+							<option value="" <?=($eventTypeActive == "")?"selected":"";?> disabled>-- 選択してください --</option>
+							<option value="challenge"<?=($eventTypeActive == "challenge_live")?" selected":"";?>>チャレンジライブイベント</option>
+							<option value="versus"<?=($eventTypeActive == "vs_live")?" selected":"";?>>対バンライブイベント</option>
+							<option value="try"<?=($eventTypeActive == "live_goals")?" selected":"";?>>ライブトライ！イベント</option>
+							<option value="mission"<?=($eventTypeActive == "mission_live")?" selected":"";?>>ミッションライブイベント</option>
 						</select>
 					</div>
 					<div id="type_Challenge">
