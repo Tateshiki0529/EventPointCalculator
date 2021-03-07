@@ -95,11 +95,11 @@
 									"mission_live" => "ミッションライブイベント"
 								];
 							?>
-							イベント期間: <?=$startDate->format("Y/m/d H:i:s");?> ～ <?=$endDate->format("Y/m/d H:i:s");?><br>
+							イベント期間: <?=$startDate->format("Y/m/d(D.) H:i");?> ～ <?=$endDate->format("Y/m/d(D.) H:i");?><br>
 							イベントタイプ: <?=$eventTypeList[$eventTypeActive];?>
-							<?php if (strtotime($startDate->format("Y/m/d H:i:s")) > time()) {
+							<?php if (strtotime($startDate->format("Y/m/d")." 11:20") >= time()) {
 								$eventTypeActive = "";
-								echo "<br><br>(イベント開催時には種別が自動選択されます)";
+								echo "<br><br>(イベント開始日の11時20分以降は種別が自動選択されます)";
 							} ?>
 						</p>
 					<?php endif; ?>
@@ -115,11 +115,18 @@
 					</div>
 					<div id="type_Challenge">
 						<hr>
+						<div class="form-inline">
+							<label for="challenge_LiveType" class="d-inline">ライブ種別:&nbsp;</label>
+							<select id="challenge_LiveType" onChange="JavaScript:calc('challenge');" class="form-control">
+								<option value="free" selected>フリーライブ</option>
+								<option value="challenge">チャレンジライブ(Beta)</option>
+							</select>
+						</div>
 						<div class="form-inline mb-5">
 							<label for="challenge_Point" class="d-inline">欲しいイベントポイント数($p$):&nbsp;</label>
-							<input type="number" id="challenge_Point" placeholder="300" class="form-control" onKeyUp="JavaScript:calc('challenge');" inputmode="numeric" pattern="[0-9]+" min="0" />
+							<input type="number" id="challenge_Point" placeholder="300" class="form-control" onKeyUp="JavaScript:calc('challenge');" onChange="JavaScript:calc('challenge');" inputmode="numeric" pattern="[0-9]+" min="0" />
 						</div>
-						<div class="form-inline mt-5">
+						<div class="form-group mt-5">
 							<label for="challenge_Result" class="d-inline">獲得すべきライブスコア($S$):&nbsp;</label>
 							<input type="text" id="challenge_Result" disabled class="form-control" />
 						</div>
@@ -128,18 +135,18 @@
 						<hr>
 						<div class="form-inline mb-5">
 							<label for="versus_Point" class="d-inline">欲しいイベントポイント数($p$):&nbsp;</label>
-							<input type="number" id="versus_Point" placeholder="300" class="form-control" onKeyUp="JavaScript:calc('versus');" inputmode="numeric" pattern="[0-9]+" min="0" />
+							<input type="number" id="versus_Point" placeholder="300" class="form-control" onKeyUp="JavaScript:calc('versus');" onChange="JavaScript:calc('versus'); inputmode="numeric" pattern="[0-9]+" min="0" />
 						</div>
 						<div class="form-inline m-2 border border-primary rounded p-3">
 							<label for="versus_ParticipatePlayerCount">参加人数:&nbsp;</label>
-							<select id="versus_ParticipatePlayerCount" onChange="JavaScript:changePlayerCount()" class="mr-3">
+							<select id="versus_ParticipatePlayerCount" onChange="JavaScript:changePlayerCount()" class="mr-3 form-control">
 								<option value="2">2人</option>
 								<option value="3">3人</option>
 								<option value="4">4人</option>
 								<option value="5" selected>5人</option>
 							</select>&nbsp;
 							<label for="versus_YourRank">あなたの貢献度ランキング:&nbsp;</label>
-							<select id="versus_YourRank" onChange="JavaScript:changePlayerCount()">
+							<select id="versus_YourRank" onChange="JavaScript:changePlayerCount()" class="form-control">
 								<option value="1" selected>1位</option>
 								<option value="2">2位</option>
 								<option value="3">3位</option>
@@ -149,7 +156,7 @@
 							<label for="versus_ContributePoint" class="d-inline">貢献度ポイント($C$):&nbsp;</label>
 							<input type="number" id="versus_ContributePoint" value="60" class="form-control" disabled />
 						</div>
-						<div class="form-inline mt-5">
+						<div class="form-group mt-5">
 							<label for="versus_Result" class="d-inline">獲得すべきライブスコア($S$):&nbsp;</label>
 							<input type="text" id="versus_Result" disabled class="form-control" />
 						</div>
@@ -158,9 +165,9 @@
 						<hr>
 						<div class="form-inline mb-5">
 							<label for="try_Point" class="d-inline">欲しいイベントポイント数($p$):&nbsp;</label>
-							<input type="number" id="try_Point" placeholder="300" class="form-control" onKeyUp="JavaScript:calc('try');" inputmode="numeric" pattern="[0-9]+" min="0" />
+							<input type="number" id="try_Point" placeholder="300" class="form-control" onKeyUp="JavaScript:calc('try');" onChange="JavaScript:calc('try');" inputmode="numeric" pattern="[0-9]+" min="0" />
 						</div>
-						<div class="form-inline mt-5">
+						<div class="form-group mt-5">
 							<label for="try_Result" class="d-inline">獲得すべきライブスコア($S$):&nbsp;</label>
 							<input type="text" id="try_Result" disabled class="form-control" />
 						</div>
@@ -169,13 +176,13 @@
 						<hr>
 						<div class="form-inline mb-5">
 							<label for="mission_Point" class="d-inline">欲しいイベントポイント数($p$):&nbsp;</label>
-							<input type="number" id="mission_Point" placeholder="300" class="form-control" onKeyUp="JavaScript:calc('mission');" inputmode="numeric" pattern="[0-9]+" min="0" />
+							<input type="number" id="mission_Point" placeholder="300" class="form-control" onKeyUp="JavaScript:calc('mission');" onChange="JavaScript:calc('mission');" inputmode="numeric" pattern="[0-9]+" min="0" />
 						</div>
 						<div class="form-inline m-2 border border-primary rounded p-3">
 							<label for="mission_SBPower" class="d-inline">サポートバンド総合力($P$):&nbsp;</label>
-							<input type="number" id="mission_SBPower" placeholder="200000" class="form-control" onKeyUp="JavaScript:calc('mission');" inputmode="numeric" pattern="[0-9]+" min="0" />
+							<input type="number" id="mission_SBPower" placeholder="200000" class="form-control" onKeyUp="JavaScript:calc('mission');" onChange="JavaScript:calc('mission');" inputmode="numeric" pattern="[0-9]+" min="0" />
 						</div>
-						<div class="form-inline mt-5">
+						<div class="form-group mt-5">
 							<label for="mission_Result" class="d-inline">獲得すべきライブスコア($S$):&nbsp;</label>
 							<input type="text" id="mission_Result" disabled class="form-control" />
 						</div>
@@ -186,18 +193,33 @@
 				<div class="col-12 p-3 text-center">
 					<h2 id="formula">計算式</h2>
 					<p>
+						$\newcommand{\bm}[1]{{\boldsymbol{\it #1}}}$
 						$\lfloor\ \rfloor$ … 切り捨て記号($\lfloor\ \rfloor$内の数値は切り捨て)<br>
-						$ex)\ \lfloor16.45\rfloor=16$
+						$ex)\ \lfloor16.45\rfloor=16$<br>
+						$\bm{\underline{n}}$ … 基本ポイント(これ以下の指定・調節は不可)
 					</p>
 					<div class="border m-1 p-2 border border-primary rounded" style="border-style: dotted !important;">
 						<h4>チャレンジライブイベント</h4>
+						<h6>フリーライブ</h6>
 						<p>
 							\[
-								S=(p-20)\times25000
+								S=(p-\bm{\underline{20}})\times25000
 							\]
 							$S$ … 獲得すべきライブスコア<br>
 							$p$ … 欲しいイベントポイント<br><br>
 							※フリーライブ、特攻キャラ(イベントタイプ・イベントキャラに当てはまらないカード)・ブースト無し時の数値
+						</p>
+						<hr>
+						<h6>チャレンジライブ (Beta)</h6>
+						<p>
+							\[
+								p=\lfloor S\div300\rfloor+\bm{\underline{1000}}
+							\]
+							$S$ … 獲得すべきライブスコア<br>
+							$p$ … 欲しいイベントポイント<br><br>
+							※チャレンジライブ、ブースト無し時の数値<br>
+							<span class="bg-warning p-1 rounded"><span class="text-danger">Warning:</span> 独自に算出した数式を利用しています。</span><br>
+							<span class="bg-warning p-1 rounded">確実な数式ではないためこの数式・計算機を使ったスコアの誤差が発生しても当サイトは一切の責任を負いません。</span>
 						</p>
 					</div>
 					<div class="border m-1 p-2 border border-primary rounded" style="border-style: dotted !important;">
@@ -248,7 +270,7 @@
 						<h4>ライブトライ！イベント</h4>
 						<p>
 							\[
-								S=(p-40)\times13000
+								S=(p-\bm{\underline{40}})\times13000
 							\]
 							$S$ … 獲得すべきライブスコア<br>
 							$p$ … 欲しいイベントポイント<br><br>
@@ -259,7 +281,7 @@
 						<h4>ミッションライブイベント</h4>
 						<p>
 							\[
-								S=\{p-40-\lfloor P\div3000\rfloor\}\times10000
+								S=\{p-\bm{\underline{40}}-\lfloor P\div3000\rfloor\}\times10000
 							\]
 							$S$ … 獲得すべきライブスコア<br>
 							$p$ … 欲しいイベントポイント<br>
@@ -280,6 +302,6 @@
 		<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 		<script src="./js/bootstrap.min.js"></script>
-		<script type="text/javascript" src="./js/system.js"></script>
+		<script type="text/javascript" src="./js/system.js?<?=time();?>"></script>
 	</body>
 </html>

@@ -30,13 +30,28 @@ function calc(type) {
 	switch(type) {
 		case "challenge":
 			var point = parseInt($("#challenge_Point").val());
-			var result = (point - 20) * 25000;
-			if(result + 24999 <= 0) {
-				$("#challenge_Result").val("調整不可 (必要pt: "+result.toLocaleString()+" ～ "+(result+24999).toLocaleString()+")");
-			} else if(isNaN(result)) {
-				$("#challenge_Result").val("入力が不足しています");
-			} else {
-				$("#challenge_Result").val(result.toLocaleString()+" ～ "+(result+24999).toLocaleString());
+			switch($("#challenge_LiveType").val()) {
+				case "free":
+					var result = (point - 20) * 25000;
+					if(result + 24999 <= 0) {
+						$("#challenge_Result").val("調整不可 (必要pt: "+result.toLocaleString()+" ～ "+(result+24999).toLocaleString()+")");
+					} else if(isNaN(result)) {
+						$("#challenge_Result").val("入力が不足しています");
+					} else {
+						$("#challenge_Result").val(result.toLocaleString()+" ～ "+(result+24999).toLocaleString());
+					}
+					break;
+				case "challenge":
+					var result = point - 1000;
+					result = result * 300;
+					if(result + 299 <= 0) {
+						$("#challenge_Result").val("調整不可 (必要pt: "+result.toLocaleString()+" ～ "+(result+299).toLocaleString()+")");
+					} else if(isNaN(result)) {
+						$("#challenge_Result").val("入力が不足しています");
+					} else {
+						$("#challenge_Result").val(result.toLocaleString()+" ～ "+(result+299).toLocaleString());
+					}
+					break;
 			}
 			break;
 		case "versus":
