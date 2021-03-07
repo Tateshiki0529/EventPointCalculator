@@ -77,6 +77,20 @@
 						<li>結果を見る。</li>
 					</ol>
 					<p>それだけ。</p>
+					<h2 id="notice">ひとこと</h2>
+					<ol>
+						<li>チャレンジライブイベントのライブ種別:協力プレイについて</li>
+						<ul>
+							<li>ポイントを割る定数(割ってスコアボーナスとする)が全体スコアに対して60000～100000(?)程度変化するらしい</li>
+							<ul>
+								<li>変化の規則性がわかるまで実装予定はありません。てかどうしようもないです。</li>
+							</ul>
+						</ul>
+						<li>小分けシステムについて</li>
+						<ul>
+							<li>システムから書き直すのでしばらくお待ちくだされ。</li>
+						</ul>
+					</ol>
 				</div>
 				<div class="col-sm-6 border border-dark rounded p-3">
 					<h2 id="form">計算フォーム</h2>
@@ -126,10 +140,6 @@
 							<label for="challenge_Point" class="d-inline">欲しいイベントポイント数($p$):&nbsp;</label>
 							<input type="number" id="challenge_Point" placeholder="300" class="form-control" onKeyUp="JavaScript:calc('challenge');" onChange="JavaScript:calc('challenge');" inputmode="numeric" pattern="[0-9]+" min="0" />
 						</div>
-						<div class="form-group mt-5">
-							<label for="challenge_Result" class="d-inline">獲得すべきライブスコア($S$):&nbsp;</label>
-							<input type="text" id="challenge_Result" disabled class="form-control" />
-						</div>
 					</div>
 					<div id="type_Versus">
 						<hr>
@@ -156,20 +166,12 @@
 							<label for="versus_ContributePoint" class="d-inline">貢献度ポイント($C$):&nbsp;</label>
 							<input type="number" id="versus_ContributePoint" value="60" class="form-control" disabled />
 						</div>
-						<div class="form-group mt-5">
-							<label for="versus_Result" class="d-inline">獲得すべきライブスコア($S$):&nbsp;</label>
-							<input type="text" id="versus_Result" disabled class="form-control" />
-						</div>
 					</div>
 					<div id="type_Try">
 						<hr>
 						<div class="form-inline mb-5">
 							<label for="try_Point" class="d-inline">欲しいイベントポイント数($p$):&nbsp;</label>
 							<input type="number" id="try_Point" placeholder="300" class="form-control" onKeyUp="JavaScript:calc('try');" onChange="JavaScript:calc('try');" inputmode="numeric" pattern="[0-9]+" min="0" />
-						</div>
-						<div class="form-group mt-5">
-							<label for="try_Result" class="d-inline">獲得すべきライブスコア($S$):&nbsp;</label>
-							<input type="text" id="try_Result" disabled class="form-control" />
 						</div>
 					</div>
 					<div id="type_Mission">
@@ -182,9 +184,30 @@
 							<label for="mission_SBPower" class="d-inline">サポートバンド総合力($P$):&nbsp;</label>
 							<input type="number" id="mission_SBPower" placeholder="200000" class="form-control" onKeyUp="JavaScript:calc('mission');" onChange="JavaScript:calc('mission');" inputmode="numeric" pattern="[0-9]+" min="0" />
 						</div>
+					</div>
+					<div class="result_form">
 						<div class="form-group mt-5">
-							<label for="mission_Result" class="d-inline">獲得すべきライブスコア($S$):&nbsp;</label>
-							<input type="text" id="mission_Result" disabled class="form-control" />
+							<label for="calc_Result" class="d-inline">獲得すべきライブスコア($S$):&nbsp;</label>
+							<input type="text" id="calc_Result" disabled class="form-control" />
+						</div>
+						<hr>
+						<div class="custom-control custom-checkbox">
+							<input type="checkbox" id="timesDivide" class="custom-control-input" onChange="JavaScript:divideCheck();">
+							<label class="custom-control-label" for="timesDivide">小分けにしてみる</label>
+						</div>
+						<div class="form-inline mt-5">
+							<label for="" class="d-inline">小分け回数:&nbsp;</label>
+							<select id="divideCount" class="form-control" disabled onChange="JavaScript:divideCheck();">
+								<?php 
+									foreach(range(1, 99) as $v) {
+										echo "<option value=\"".($v+1)."\">".($v+1)."回</option>\n";
+									}
+								?>
+							</select>
+						</div>
+						<div class="form-group">
+							<label for="divideDetails">小分け詳細:</label>
+							<textarea id="divideDetails" cols="30" rows="10" class="form-control" disabled readonly></textarea>
 						</div>
 					</div>
 				</div>
