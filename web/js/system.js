@@ -124,6 +124,7 @@ function changePlayerCount() {
 }
 $(window).on("load", function() {
 	allHide();
+	selectType();
 	$('a[href^="#"]').click(function(){
 		let speed = 500;
 		let href = $(this).attr("href");
