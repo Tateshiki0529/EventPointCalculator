@@ -3,6 +3,7 @@ function allHide() {
 	$("#type_Versus").hide();
 	$("#type_Try").hide();
 	$("#type_Mission").hide();
+	$("#divide_input").hide();
 }
 
 function selectType() {
@@ -24,6 +25,34 @@ function selectType() {
 			$("#type_Mission").show();
 			break;
 	}
+	$("#divide_input").show();
+}
+
+function calc_PtS(type, liveType = null, p = NaN, P = NaN, C = NaN) {
+	switch(type) {
+		case "challenge":
+			if (liveType == null || liveType == "free") {
+				var result = (p - 20) * 25000;
+			} else if (liveType = "challenge") {
+				var result = point - 1000;
+				result = result * 300;
+			} else {
+				return false;
+			}
+			break;
+		case "versus":
+			var result = (p - C) * 5500;
+			break;
+		case "try":
+			var result = (p - 40) * 13000;
+			break;
+		case "mission":
+			var result = (p - 40 - Math.floor(P / 3000)) * 10000;
+			break;
+		default:
+			return false;
+	}
+	return result;
 }
 
 function calc(type) {
@@ -32,24 +61,25 @@ function calc(type) {
 			var point = parseInt($("#challenge_Point").val());
 			switch($("#challenge_LiveType").val()) {
 				case "free":
-					var result = (point - 20) * 25000;
+					var result = calc_PtS("challenge", "free", point);
 					if(result + 24999 <= 0) {
-						$("#challenge_Result").val("調整不可 (必要pt: "+result.toLocaleString()+" ～ "+(result+24999).toLocaleString()+")");
+						$("#calc_Result").val("調整不可 (必要pt: "+result.toLocaleString()+" ～ "+(result+24999).toLocaleString()+")");
 					} else if(isNaN(result)) {
-						$("#challenge_Result").val("入力が不足しています");
+						$("#calc_Result").val("入力が不足しています");
 					} else {
-						$("#challenge_Result").val(result.toLocaleString()+" ～ "+(result+24999).toLocaleString());
+						$("#calc_Result").val(result.toLocaleString()+" ～ "+(result+24999).toLocaleString());
+						divideCheck();
 					}
 					break;
 				case "challenge":
-					var result = point - 1000;
-					result = result * 300;
+					var result = calc_PtS("challenge", "challenge", point);
 					if(result + 299 <= 0) {
-						$("#challenge_Result").val("調整不可 (必要pt: "+result.toLocaleString()+" ～ "+(result+299).toLocaleString()+")");
+						$("#calc_Result").val("調整不可 (必要pt: "+result.toLocaleString()+" ～ "+(result+299).toLocaleString()+")");
 					} else if(isNaN(result)) {
-						$("#challenge_Result").val("入力が不足しています");
+						$("#calc_Result").val("入力が不足しています");
 					} else {
-						$("#challenge_Result").val(result.toLocaleString()+" ～ "+(result+299).toLocaleString());
+						$("#calc_Result").val(result.toLocaleString()+" ～ "+(result+299).toLocaleString());
+						divideCheck();
 					}
 					break;
 			}
@@ -57,36 +87,39 @@ function calc(type) {
 		case "versus":
 			var point = parseInt($("#versus_Point").val());
 			var contributePoint = parseInt($("#versus_ContributePoint").val());
-			var result = (point - contributePoint) * 5500;
+			var result = calc_PtS("versus", null, point, NaN, contributePoint);
 			if(result + 5499 <= 0) {
-				$("#versus_Result").val("調整不可 (必要pt: "+result.toLocaleString()+" ～ "+(result+5499).toLocaleString()+")");
+				$("#calc_Result").val("調整不可 (必要pt: "+result.toLocaleString()+" ～ "+(result+5499).toLocaleString()+")");
 			} else if(isNaN(result)) {
-				$("#versus_Result").val("入力が不足しています");
+				$("#calc_Result").val("入力が不足しています");
 			} else {
-				$("#versus_Result").val(result.toLocaleString()+" ～ "+(result+5499).toLocaleString());
+				$("#calc_Result").val(result.toLocaleString()+" ～ "+(result+5499).toLocaleString());
+				divideCheck();
 			}
 			break;
 		case "try":
 			var point = parseInt($("#try_Point").val());
-			var result = (point - 40) * 13000;
+			var result = calc_PtS("try", null, point);
 			if(result + 12999 <= 0) {
-				$("#try_Result").val("調整不可 (必要pt: "+result.toLocaleString()+" ～ "+(result+12999).toLocaleString()+")");
+				$("#calc_Result").val("調整不可 (必要pt: "+result.toLocaleString()+" ～ "+(result+12999).toLocaleString()+")");
 			} else if(isNaN(result)) {
-				$("#try_Result").val("入力が不足しています");
+				$("#calc_Result").val("入力が不足しています");
 			} else {
-				$("#try_Result").val(result.toLocaleString()+" ～ "+(result+12999).toLocaleString());
+				$("#calc_Result").val(result.toLocaleString()+" ～ "+(result+12999).toLocaleString());
+				divideCheck();
 			}
 			break;
 		case "mission":
 			var point = parseInt($("#mission_Point").val());
 			var power = parseInt($("#mission_SBPower").val());
-			var result = (point - 40 - Math.floor(power / 3000)) * 10000;
+			var result = calc_PtS("mission", null, point, power);
 			if(result + 9999 <= 0) {
-				$("#mission_Result").val("調整不可 (必要pt: "+result.toLocaleString()+" ～ "+(result+9999).toLocaleString()+")");
+				$("#calc_Result").val("調整不可 (必要pt: "+result.toLocaleString()+" ～ "+(result+9999).toLocaleString()+")");
 			} else if(isNaN(result)) {
-				$("#mission_Result").val("入力が不足しています");
+				$("#calc_Result").val("入力が不足しています");
 			} else {
-				$("#mission_Result").val(result.toLocaleString()+" ～ "+(result+9999).toLocaleString());
+				$("#calc_Result").val(result.toLocaleString()+" ～ "+(result+9999).toLocaleString());
+				divideCheck();
 			}
 			break;
 	}
@@ -137,6 +170,65 @@ function changePlayerCount() {
 	$("#versus_ContributePoint").val(contributePoint);
 	calc("versus");
 }
+
+function divideCheck() {
+	var totalPoint = parseInt($("#"+$("#eventType").val()+"_Point").val());
+	var oneTimePoint = Math.floor(totalPoint / parseInt($("#divideCount").val()));
+
+	var pList = [];
+	var totalPointBuf = 0;
+	for (i=1;i<parseInt($("#divideCount").val());i++) {
+		pList.push(oneTimePoint);
+		totalPointBuf += oneTimePoint;
+	}
+	pList.push(totalPoint - totalPointBuf);
+	var output = [];
+	totalPointBuf = totalPoint;
+	pList.forEach(function(value, index) {
+		switch($("#eventType").val()) {
+			case "challenge":
+				switch($("#challenge_LiveType").val()) {
+					case "free":
+						var result = calc_PtS("challenge", "free", value);
+						var resMax = result + 24999;
+						break;
+					case "challenge":
+						var result = calc_PtS("challenge", "challenge", value);
+						var resMax = result + 299;
+						break;
+				}
+				break;
+			case "versus":
+				var point = parseInt($("#versus_Point").val());
+				var contributePoint = parseInt($("#versus_ContributePoint").val());
+				var result = calc_PtS("versus", null, value, NaN, contributePoint);
+				var resMax = result + 5499;
+				break;
+			case "try":
+				var point = parseInt($("#try_Point").val());
+				var result = calc_PtS("try", null, value);
+				var resMax = result + 12999;
+				break;
+			case "mission":
+				var point = parseInt($("#mission_Point").val());
+				var power = parseInt($("#mission_SBPower").val());
+				var result = calc_PtS("mission", null, value, power);
+				var resMax = result + 9999;
+				break;
+		}
+		totalPointBuf -= value;
+		output.push("#"+(index+1)+" "+value+" pts (Remaining: "+totalPointBuf+" pts) | Score: "+result.toLocaleString()+" ～ "+resMax.toLocaleString());
+	});
+	if ($("#timesDivide").prop("checked")) {
+		$("#divideCount").prop("disabled", false);
+		$("#divideDetails").prop("disabled", false);
+		$("#divideDetails").text(output.join("\n"));
+	} else {
+		$("#divideCount").prop("disabled", true);
+		$("#divideDetails").prop("disabled", true);
+	}
+}
+
 $(window).on("load", function() {
 	allHide();
 	selectType();
@@ -153,7 +245,7 @@ $(function() {
 	var pageTop = $("#page_top");
 	pageTop.hide();
 	$(window).scroll(function() {
-		console.log($(this).scrollTop());
+		// console.log($(this).scrollTop());
 		if ($(this).scrollTop() > 100) {
 			pageTop.fadeIn();
 		} else {
