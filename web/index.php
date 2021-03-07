@@ -1,4 +1,5 @@
 <?php
+	// latest event retriever
 	$eventUrl = "https://bandori.party/api/events/";
 	$accessDate = date("Y/m/d H:i:s");
 	$eventData = json_decode(file_get_contents($eventUrl), true);
