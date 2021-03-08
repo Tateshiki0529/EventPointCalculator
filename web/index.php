@@ -88,7 +88,7 @@
 						</ul>
 						<li>小分けシステムについて</li>
 						<ul>
-							<li>システムから書き直すのでしばらくお待ちくだされ。</li>
+							<li><s>システムから書き直すのでしばらくお待ちくだされ。</s><a href="https://github.com/Tateshiki0529/EventPointCalculator/commit/6be22a7c3435396612cc4e1aa68db4fc6ed6aa09" target="_blank">対応しました！！！！(GitHub)</a></li>
 						</ul>
 					</ol>
 				</div>
@@ -111,9 +111,9 @@
 							?>
 							イベント期間: <?=$startDate->format("Y/m/d(D.) H:i");?> ～ <?=$endDate->format("Y/m/d(D.) H:i");?><br>
 							イベントタイプ: <?=$eventTypeList[$eventTypeActive];?>
-							<?php if (strtotime($startDate->format("Y/m/d")." 11:20") >= time()) {
+							<?php if (strtotime($startDate->format("Y/m/d")." 11:20") >= time() and strtotime($endDate->format("Y/m/d H:i")) <= time()) {
 								$eventTypeActive = "";
-								echo "<br><br>(イベント開始日の11時20分以降は種別が自動選択されます)";
+								echo "<br><br>(イベント開始日の11時20分以降イベント終了時までは種別が自動選択されます)";
 							} ?>
 						</p>
 					<?php endif; ?>
