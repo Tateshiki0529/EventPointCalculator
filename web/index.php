@@ -90,6 +90,10 @@
 						<ul>
 							<li><s>システムから書き直すのでしばらくお待ちくだされ。</s><a href="https://github.com/Tateshiki0529/EventPointCalculator/commit/6be22a7c3435396612cc4e1aa68db4fc6ed6aa09" target="_blank">対応しました！！！！(GitHub)</a></li>
 						</ul>
+						<li>システム不具合 (2021/06/12 修正)</li>
+						<ul>
+							<li>チャレンジライブイベント - チャレンジライブ の結果が反映されない問題を修正。<br><a href="https://github.com/Tateshiki0529/EventPointCalculator/commit/9450ae4f52068381d01017af27cae0359b22103a" target="_blank">Commit #9450ae4</a></li>
+						</ul>
 					</ol>
 				</div>
 				<div class="col-sm-6 border border-dark rounded p-3">
