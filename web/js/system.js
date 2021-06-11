@@ -34,7 +34,7 @@ function calc_PtS(type, liveType = null, p = NaN, P = NaN, C = NaN) {
 			if (liveType == null || liveType == "free") {
 				var result = (p - 20) * 25000;
 			} else if (liveType = "challenge") {
-				var result = point - 1000;
+				var result = p - 1000;
 				result = result * 300;
 			} else {
 				return false;
@@ -217,7 +217,12 @@ function divideCheck() {
 				break;
 		}
 		totalPointBuf -= value;
-		output.push("#"+(index+1)+" "+value+" pts (Remaining: "+totalPointBuf+" pts) | Score: "+result.toLocaleString()+" ～ "+resMax.toLocaleString());
+		if (resMax < 0) {
+			output.push("#"+(index+1)+" "+value+" pts (Remaining: "+totalPointBuf+" pts) | Score: "+result.toLocaleString()+" ～ "+resMax.toLocaleString()+" (調整不可)");
+		} else {
+			output.push("#"+(index+1)+" "+value+" pts (Remaining: "+totalPointBuf+" pts) | Score: "+result.toLocaleString()+" ～ "+resMax.toLocaleString());
+		}
+		
 	});
 	if ($("#timesDivide").prop("checked")) {
 		$("#divideCount").prop("disabled", false);
