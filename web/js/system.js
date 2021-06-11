@@ -34,7 +34,7 @@ function calc_PtS(type, liveType = null, p = NaN, P = NaN, C = NaN) {
 			if (liveType == null || liveType == "free") {
 				var result = (p - 20) * 25000;
 			} else if (liveType = "challenge") {
-				var result = point - 1000;
+				var result = p - 1000;
 				result = result * 300;
 			} else {
 				return false;
