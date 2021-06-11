@@ -217,7 +217,12 @@ function divideCheck() {
 				break;
 		}
 		totalPointBuf -= value;
-		output.push("#"+(index+1)+" "+value+" pts (Remaining: "+totalPointBuf+" pts) | Score: "+result.toLocaleString()+" ～ "+resMax.toLocaleString());
+		if (resMax < 0) {
+			output.push("#"+(index+1)+" "+value+" pts (Remaining: "+totalPointBuf+" pts) | Score: "+result.toLocaleString()+" ～ "+resMax.toLocaleString()+" (調整不可)");
+		} else {
+			output.push("#"+(index+1)+" "+value+" pts (Remaining: "+totalPointBuf+" pts) | Score: "+result.toLocaleString()+" ～ "+resMax.toLocaleString());
+		}
+		
 	});
 	if ($("#timesDivide").prop("checked")) {
 		$("#divideCount").prop("disabled", false);
