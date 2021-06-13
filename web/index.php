@@ -86,13 +86,13 @@
 								<li>変化の規則性がわかるまで実装予定はありません。てかどうしようもないです。</li>
 							</ul>
 						</ul>
-						<li>小分けシステムについて</li>
-						<ul>
-							<li><s>システムから書き直すのでしばらくお待ちくだされ。</s><a href="https://github.com/Tateshiki0529/EventPointCalculator/commit/6be22a7c3435396612cc4e1aa68db4fc6ed6aa09" target="_blank">対応しました！！！！(GitHub)</a></li>
-						</ul>
 						<li>システム不具合 (2021/06/12 修正)</li>
 						<ul>
 							<li>チャレンジライブイベント - チャレンジライブ の結果が反映されない問題を修正。<br><a href="https://github.com/Tateshiki0529/EventPointCalculator/commit/9450ae4f52068381d01017af27cae0359b22103a" target="_blank">Commit #9450ae4</a></li>
+						</ul>
+						<li>独自ドメイン化！</li>
+						<ul>
+							<li>システムをまるっと独自ドメインとしてサービス化しました！ブックマークして使ってね！<br><br><a href="https://gbp.epcalc.ml/">EventPointCalculator</a></li>
 						</ul>
 					</ol>
 				</div>
@@ -323,7 +323,7 @@
 		<div id="page_top"><a href="#"></a></div>
 		<footer class="bg-dark text-center mt-3 p-3">
 			<small class="text-light">Copyright &copy; <script>start=2021;if(new Date().getFullYear()==start){document.write("2021");}else{document.write("2021-"+new Date().getFullYear());}</script> <a target="_blank" href="https://ttsk3.net/">Tateshiki0529</a>.</small>
-			<!--タグはここから--><table border="0" cellspacing="0" cellpadding="0" style="margin-left: auto;margin-right: auto;"><tr><td align="center"><a href="http://www.rays-counter.com/"><img src="http://www.rays-counter.com/d480_f6_028/6043d509817ed/" alt="アクセスカウンター" border="0"></a></td></tr><tr><td align="center"><img src="http://www.rays-counter.com/images/counter_01.gif" border="0"><img src="http://www.rays-counter.com/images/counter_02.gif" border="0"><img src="http://www.rays-counter.com/images/counter_03.gif" border="0" alt=""><img src="http://www.rays-counter.com/images/counter_04.gif" border="0"><img src="http://www.rays-counter.com/images/counter_05.gif" border="0" ></td></tr></table><!--ここまで-->
+			<!--タグはここから--><table border="0" cellspacing="0" cellpadding="0" style="margin-left: auto;margin-right: auto;"><tr><td align="center"><a href="http://www.rays-counter.com/"><img src="./libs/img.php?url=http%3A%2F%2Fwww.rays-counter.com%2Fd480_f6_028%2F6043d509817ed%2F" alt="アクセスカウンター" border="0"></a></td></tr><tr><td align="center"><img src="./libs/img.php?url=http%3A%2F%2Fwww.rays-counter.com%2Fimages%2Fcounter_01.gif" border="0"><img src="./libs/img.php?url=http%3A%2F%2Fwww.rays-counter.com%2Fimages%2Fcounter_02.gif" border="0"><img src="./libs/img.php?url=http%3A%2F%2Fwww.rays-counter.com%2Fimages%2Fcounter_03.gif" border="0" alt=""><img src="./libs/img.php?url=http%3A%2F%2Fwww.rays-counter.com%2Fimages%2Fcounter_04.gif" border="0"><img src="./libs/img.php?url=http%3A%2F%2Fwww.rays-counter.com%2Fimages%2Fcounter_05.gif" border="0" ></td></tr></table><!--ここまで-->
 		</footer>
 
 		<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
