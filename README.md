@@ -2,6 +2,8 @@
 # EventPointCalculator
 ガルパのイベントポイントを計算する。
 # 更新履歴
+- 2021/06/14 v2.0.0
+	- 新ドメインへ移行しました( https://gbp.epcalc.ml/ )。
 - 2021/06/12 v1.4.1
 	- チャレンジライブイベント - チャレンジライブ の項目が変更しても表示されない問題を修正(Commit: [9450ae4](https://github.com/Tateshiki0529/EventPointCalculator/commit/9450ae4f52068381d01017af27cae0359b22103a))
 	- 小分け機能でポイント範囲最大値が0以下の時「調整不可」と表示するように変更(Commit: [9c1a7b](https://github.com/Tateshiki0529/EventPointCalculator/commit/9c1a7ba2a12a1e28624fa61fd9cc83454d932437))
