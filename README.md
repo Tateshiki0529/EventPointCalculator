@@ -2,6 +2,8 @@
 # EventPointCalculator
 ガルパのイベントポイントを計算する。
 # 更新履歴
+- 2021/06/14 v2.0.1
+ 	- httpsの統一化設定を追加しました(Commit: [3caa123](https://github.com/Tateshiki0529/EventPointCalculator/commit/3caa12363171d0bc0eb4d91ce5c69a4ba499684b))
 - 2021/06/14 v2.0.0
 	- 新ドメインへ移行しました( https://gbp.epcalc.ml/ )。
 - 2021/06/12 v1.4.1
