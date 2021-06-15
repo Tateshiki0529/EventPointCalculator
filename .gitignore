@@ -1,3 +1,10 @@
 web/LICENSE
 web/README.md
 web/bootstrap.html
+python/__pycache__/
+python/build/
+python/items/
+python/setup.py
+python/.eggs
+python/EventPointCalculator.exe
+python/dist
