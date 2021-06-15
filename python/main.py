@@ -1,7 +1,7 @@
 import wx, math, webbrowser
 
 versusContPointList = [60, 52, 44, 37, 30]
-APPVERSION = "1.0.0"
+APPVERSION = "1.1.0"
 
 def selectEventType(e):
 	obj = e.GetEventObject()
@@ -141,6 +141,11 @@ def urlClick2(e):
 	if e.LeftUp():
 		webbrowser.open("https://gbp.epcalc.ml/")
 	e.Skip()
+
+def resourcePath(path):
+	if hasattr(sys, '_MEIPASS'):
+		return os.path.join(sys._MEIPASS, path)
+	return os.path.join(os.path.abspath("."), path)
 
 if __name__ == "__main__":
 	app = wx.App()
@@ -406,6 +411,9 @@ if __name__ == "__main__":
 
 	notebook.InsertPage(0, pagePanel1, "計算")
 	notebook.InsertPage(1, pagePanel2, "About")
+
+	icon = wx.Icon(resourcePath('logo.ico'), wx.BITMAP_TYPE_ICO)
+	frame.SetIcon(icon)
 
 	frame.Show()
 	app.MainLoop()

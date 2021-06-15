@@ -8,3 +8,4 @@ python/setup.py
 python/.eggs
 python/EventPointCalculator.exe
 python/dist
+python/main.spec
