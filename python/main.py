@@ -1,11 +1,64 @@
-import wx, math, webbrowser
+import wx, math, sys, os, configparser, time, datetime, webbrowser
+from distutils.version import LooseVersion
+from requests import get
 
 versusContPointList = [60, 52, 44, 37, 30]
-APPVERSION = "1.1.0"
+APPVERSION = "2.0.0"
+lastUpdated = 0
+eventTypeList = {
+	"challenge_live": "チャレンジライブイベント",
+	"vs_live": "対バンライブイベント",
+	"live_goals": "ライブトライ！イベント",
+	"mission_live": "ミッションライブイベント"
+}
+eventTypeIndexList = {
+	"challenge_live": 0,
+	"vs_live": 1,
+	"live_goals": 2,
+	"mission_live": 3
+}
+
+def updateCheck():
+	url = "https://raw.githubusercontent.com/Tateshiki0529/EventPointCalculator/main/AppVersion.json"
+	versionData = get(url).json()
+	if LooseVersion(APPVERSION) < LooseVersion(versionData["Version"]["WindowsApp"]):
+		ret = wx.MessageBox(u"アプリのアップデートがあります。\n\n現在のアプリのバージョン: "+APPVERSION+"\n最新のバージョン: "+versionData["Version"]["AppVersion"]+"\n\nアップデートリリースページへアクセスしますか？", u"EventPointCalculator", wx.YES_NO)
+		if ret == wx.YES:
+			webbrowser.open(versionData["UpdateURL"]["WindowsApp"])
+
+def reloadNowEventInfo():
+	global lastUpdated
+	url = "https://bandori.party/api/events/"
+	eventData = get(url).json()
+	lastUpdated = int(time.time())
+	return eventData
+
+def reloadNowEventInfoShow(e):
+	global lastUpdated
+	global eventTypeList
+	global eventTypeIndexList
+	if time.time() - lastUpdated > 300:
+		eventData = reloadNowEventInfo()["results"][0]
+
+		lastUpdated = int(time.time())
+		eventStartDate = (datetime.datetime.strptime(eventData["start_date"], "%Y-%m-%dT%H:%M:%SZ") + datetime.timedelta(hours=9)).strftime("%Y/%m/%d %H:%M:%S")
+		eventEndDate = (datetime.datetime.strptime(eventData["end_date"], "%Y-%m-%dT%H:%M:%SZ") + datetime.timedelta(hours=9)).strftime("%Y/%m/%d %H:%M:%S")
+		labelEventTitle.SetLabel("イベントタイトル: "+eventData["japanese_name"])
+		labelEventDuration.SetLabel("イベント期間: "+eventStartDate+" ～ "+eventEndDate)
+		labelEventType.SetLabel("イベントタイプ: "+eventTypeList[eventData["i_type"]])
+		labelEventDataLastUpdated.SetLabel("最終更新日時: "+datetime.datetime.fromtimestamp(lastUpdated).strftime("%Y/%m/%d %H:%M:%S"))
+		calcPanelEventDataResultPanel.Layout()
+		calcPanelEventTypeListbox.SetSelection(eventTypeIndexList[eventData["i_type"]])
+		if eventData["i_type"] == "challenge_live":
+			calcPanelLiveTypeListbox.SetSelection(0)
+		selectEventType(calcPanelEventTypeListbox)
+		if e is not None:
+			wx.MessageBox(u"情報を更新しました。", u"EventPointCalculator")
+	else:
+		wx.MessageBox(u"更新は5分ごとしかできません。", u"EventPointCalculator", wx.ICON_EXCLAMATION)
 
 def selectEventType(e):
-	obj = e.GetEventObject()
-	eventType = obj.GetClientData(obj.GetSelection())
+	eventType = calcPanelEventTypeListbox.GetClientData(calcPanelEventTypeListbox.GetSelection())
 	eventPanelVisibleToggle(eventType)
 	if eventType == "challenge":
 		calcPanelLiveTypeListbox.Clear()
@@ -147,21 +200,48 @@ def resourcePath(path):
 		return os.path.join(sys._MEIPASS, path)
 	return os.path.join(os.path.abspath("."), path)
 
+def loadConfig():
+	if (os.path.isfile(".\\EventPointCalculator.ini")):
+		config = configparser.ConfigParser()
+		config.read("./EventPointCalculator.ini")
+		return config
+	else:
+		wx.MessageBox(u"コンフィグファイルがありません。自動作成します。", u"EventPointCalculator")
+		config = configparser.RawConfigParser()
+		config.add_section("Settings")
+		config.set("Settings", "EventAutoload", True)
+		config.set("Settings", "AppUpdateCheck", False)
+
+		with open(".\\EventPointCalculator.ini", "w") as f:
+			config.write(f)
+
+def saveConfig(e):
+	config = configparser.RawConfigParser()
+	config.add_section("Settings")
+	config.set("Settings", "EventAutoload", settingPanelEventAutoloadCheckbox.GetValue())
+	config.set("Settings", "AppUpdateCheck", settingPanelAppAutoUpdateCheckCheckbox.GetValue())
+
+	with open(".\\EventPointCalculator.ini", "w") as f:
+		config.write(f)
+	
+	wx.MessageBox(u"設定を保存しました。", u"EventPointCalculator")
+
 if __name__ == "__main__":
 	app = wx.App()
-	frame = wx.Frame(None, wx.ID_ANY, "EventPointCalculator for Python", size=(500, 450))
+	config = loadConfig()
+	frame = wx.Frame(None, wx.ID_ANY, "EventPointCalculator for Python", size=(532, 450), style=wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX | wx.CLIP_CHILDREN | wx.MINIMIZE_BOX)
 	frame.CreateStatusBar()
 	frame.SetStatusText('EventPointCalculator Ready.')
 
 	notebook = wx.Notebook(frame, wx.ID_ANY)
 
-	# ページ1. 計算
+	# 計算ページ (ここから)
 	
 	# ページパネル (親: notebook)
-	pagePanel1 = wx.Panel(notebook, wx.ID_ANY)
+	pagePanelCalc = wx.Panel(notebook, wx.ID_ANY)
 
-	# 計算パラメータ等入力パネル (親: pagePanel1)
-	calcPanel = wx.Panel(pagePanel1, wx.ID_ANY)
+	# 計算パラメータ等入力パネル (親: pagePanelCalc)
+	calcPanel = wx.Panel(pagePanelCalc, wx.ID_ANY)
 	calcPanel.SetBackgroundColour("#fff")
 	
 	# イベントタイプ選択用パネル (親: calcPanel)
@@ -186,6 +266,30 @@ if __name__ == "__main__":
 	calcPanelEventTypeLayout.Add(calcPanelEventTypeListbox, flag=wx.EXPAND | wx.ALL, border=3)
 	calcPanelEventTypeLayout.Add(wx.StaticText(calcPanelEventTypePanel, wx.ID_ANY, "ライブ種別"))
 	calcPanelEventTypeLayout.Add(calcPanelLiveTypeListbox, flag=wx.EXPAND | wx.ALL, border=3)
+
+	calcPanelEventDataResultPanel = wx.Panel(calcPanelEventTypePanel, wx.ID_ANY)
+
+	labelEventTitle = wx.StaticText(calcPanelEventDataResultPanel, wx.ID_ANY, "イベントタイトル: ------")
+	labelEventDuration = wx.StaticText(calcPanelEventDataResultPanel, wx.ID_ANY, "イベント期間: ----/--/-- --:--:-- ～ ----/--/-- --:--:--")
+	labelEventType = wx.StaticText(calcPanelEventDataResultPanel, wx.ID_ANY, "イベントタイプ: ------")
+	labelEventDataLastUpdated = wx.StaticText(calcPanelEventDataResultPanel, wx.ID_ANY, "最終更新日時: ----/--/-- --:--:--")
+
+	calcPanelEventDataResultLayout = wx.StaticBoxSizer(wx.StaticBox(calcPanelEventDataResultPanel, wx.ID_ANY, "イベント情報取得結果"), wx.VERTICAL)
+	calcPanelEventDataResultLayout.Add(wx.StaticText(calcPanelEventDataResultPanel, wx.ID_ANY, "現在開催されているイベント: "))
+	calcPanelEventDataResultLayout.Add(labelEventTitle)
+	calcPanelEventDataResultLayout.Add(labelEventDuration)
+	calcPanelEventDataResultLayout.Add(labelEventType)
+	calcPanelEventDataResultLayout.Add(wx.StaticText(calcPanelEventDataResultPanel, wx.ID_ANY, ""))
+	calcPanelEventDataResultLayout.Add(labelEventDataLastUpdated)
+		
+	calcPanelEventDataResultPanel.SetSizer(calcPanelEventDataResultLayout)
+
+	calcPanelEventTypeLayout.Add(calcPanelEventDataResultPanel)
+
+	calcPanelEventReloadButton = wx.Button(calcPanelEventTypePanel, wx.ID_ANY, "情報を更新する")
+	calcPanelEventReloadButton.Bind(wx.EVT_BUTTON, reloadNowEventInfoShow)
+	calcPanelEventTypeLayout.Add(calcPanelEventReloadButton, flag=wx.ALIGN_RIGHT | wx.ALL, border=5)
+
 	calcPanelEventTypePanel.SetSizer(calcPanelEventTypeLayout)
 
 	# ------------------------------
@@ -358,8 +462,8 @@ if __name__ == "__main__":
 	calcPanelMissionEventPanel.Hide()
 	calcPanel.Layout()
 
-	# 計算結果表示パネル (親: pagePanel1)
-	resultPanel = wx.Panel(pagePanel1, wx.ID_ANY)
+	# 計算結果表示パネル (親: pagePanelCalc)
+	resultPanel = wx.Panel(pagePanelCalc, wx.ID_ANY)
 	resultPanel.SetBackgroundColour("#fff")
 
 	# 計算結果テキスト表示ボックス (親: resultPanel)
@@ -373,47 +477,97 @@ if __name__ == "__main__":
 
 	resultPanel.SetSizer(resultPanelLayout)
 
-	# ページパネル構成レイアウト (親: pagePanel1)
-	pagePanel1Layout = wx.FlexGridSizer(rows=2, cols=1, gap=(0, 0))
-	pagePanel1Layout.Add(calcPanel, proportion=1, flag=wx.GROW | wx.EXPAND | wx.ALL, border=7)
-	pagePanel1Layout.Add(resultPanel, proportion=1, flag=wx.GROW | wx.EXPAND | wx.ALL, border=7)
-	pagePanel1Layout.AddGrowableRow(0)
-	pagePanel1Layout.AddGrowableCol(0)
+	# ページパネル構成レイアウト (親: pagePanelCalc)
+	pagePanelCalcLayout = wx.FlexGridSizer(rows=2, cols=1, gap=(0, 0))
+	pagePanelCalcLayout.Add(calcPanel, proportion=1, flag=wx.GROW | wx.EXPAND | wx.ALL, border=7)
+	pagePanelCalcLayout.Add(resultPanel, proportion=1, flag=wx.GROW | wx.EXPAND | wx.ALL, border=7)
+	pagePanelCalcLayout.AddGrowableRow(0)
+	pagePanelCalcLayout.AddGrowableCol(0)
 
-	pagePanel1.SetSizer(pagePanel1Layout)
-	# ページ1ここまで
+	pagePanelCalc.SetSizer(pagePanelCalcLayout)
+	# 計算ページ (ここまで)
 
-	# ページ2. About (親: notebook)
-	pagePanel2 = wx.Panel(notebook, wx.ID_ANY)
+	# 概要ページ (ここから)
+	pagePanelAbout = wx.Panel(notebook, wx.ID_ANY)
 
-	pagePanel2Layout = wx.BoxSizer(wx.VERTICAL)
-	aboutPanelUrlTextTwitter = wx.StaticText(pagePanel2, wx.ID_ANY, "by @T_BanGDreamer")
+	pagePanelAboutLayout = wx.BoxSizer(wx.VERTICAL)
+	aboutPanelUrlTextTwitter = wx.StaticText(pagePanelAbout, wx.ID_ANY, "by @T_BanGDreamer")
 	aboutPanelUrlTextTwitter.Bind(wx.EVT_MOUSE_EVENTS, urlClick1)
 	aboutPanelUrlTextTwitter.Bind(wx.EVT_MOTION, urlClick1)
 	font = wx.Font(8, wx.DEFAULT, wx.ITALIC, wx.FONTWEIGHT_LIGHT, True)
 	aboutPanelUrlTextTwitter.SetFont(font)
 	aboutPanelUrlTextTwitter.SetForegroundColour('#0000ff')
-	aboutPanelUrlTextWeb = wx.StaticText(pagePanel2, wx.ID_ANY, "https://gbp.epcalc.ml/")
+	aboutPanelUrlTextWeb = wx.StaticText(pagePanelAbout, wx.ID_ANY, "https://gbp.epcalc.ml/")
 	aboutPanelUrlTextWeb.Bind(wx.EVT_MOUSE_EVENTS, urlClick2)
 	aboutPanelUrlTextWeb.Bind(wx.EVT_MOTION, urlClick2)
 	font2 = wx.Font(8, wx.DEFAULT, wx.ITALIC, wx.FONTWEIGHT_LIGHT, True)
 	aboutPanelUrlTextWeb.SetFont(font2)
 	aboutPanelUrlTextWeb.SetForegroundColour('#0000ff')
 	for i in range(0, 9):
-		pagePanel2Layout.Add(wx.StaticText(pagePanel2, wx.ID_ANY, ""))
-	pagePanel2Layout.Add(wx.StaticText(pagePanel2, wx.ID_ANY, "EventPointCalculator for Python v"+APPVERSION), flag=wx.ALIGN_CENTER, border=3)
-	pagePanel2Layout.Add(aboutPanelUrlTextTwitter, flag=wx.ALIGN_CENTER, border=3)
-	pagePanel2Layout.Add(wx.StaticText(pagePanel2, wx.ID_ANY, ""))
-	pagePanel2Layout.Add(aboutPanelUrlTextWeb, flag=wx.ALIGN_CENTER, border=3)
-	pagePanel2.SetSizer(pagePanel2Layout)
+		pagePanelAboutLayout.Add(wx.StaticText(pagePanelAbout, wx.ID_ANY, ""))
+	pagePanelAboutLayout.Add(wx.StaticText(pagePanelAbout, wx.ID_ANY, "EventPointCalculator for Python v"+APPVERSION), flag=wx.ALIGN_CENTER, border=3)
+	pagePanelAboutLayout.Add(aboutPanelUrlTextTwitter, flag=wx.ALIGN_CENTER, border=3)
+	pagePanelAboutLayout.Add(wx.StaticText(pagePanelAbout, wx.ID_ANY, ""))
+	pagePanelAboutLayout.Add(aboutPanelUrlTextWeb, flag=wx.ALIGN_CENTER, border=3)
+	pagePanelAbout.SetSizer(pagePanelAboutLayout)
 
-	# ページ2ここまで
+	# 概要ページ (ここまで)
 
-	notebook.InsertPage(0, pagePanel1, "計算")
-	notebook.InsertPage(1, pagePanel2, "About")
+	# 設定ページ (ここから)
+	pagePanelSetting = wx.Panel(notebook, wx.ID_ANY)
+
+	# イベント自動取得設定パネル (親: pagePanelSetting)
+	settingPanelEventAutoloadPanel = wx.Panel(pagePanelSetting, wx.ID_ANY)
+
+	# イベント自動取得設定チェックボックス (親: settingPanelEventAutoloadPanel)
+	settingPanelEventAutoloadCheckbox = wx.CheckBox(settingPanelEventAutoloadPanel, wx.ID_ANY, " 起動時にイベント情報を自動で取得し反映する")
+
+	# アプリ更新自動取得設定チェックボックス (親: settingPanelEventAutoloadPanel)
+	settingPanelAppAutoUpdateCheckCheckbox = wx.CheckBox(settingPanelEventAutoloadPanel, wx.ID_ANY, " 起動時にアプリの更新を確認する")
+
+	# イベント自動取得設定パネルレイアウト (親: settingPanelEventAutoloadPanel)
+	settingPanelEventAutoloadBox = wx.StaticBox(settingPanelEventAutoloadPanel, wx.ID_ANY, "自動更新設定")
+	settingPanelEventAutoloadLayout = wx.StaticBoxSizer(settingPanelEventAutoloadBox, wx.VERTICAL)
+	settingPanelEventAutoloadLayout.Add(settingPanelEventAutoloadCheckbox, flag=wx.ALL, border=5)
+	settingPanelEventAutoloadLayout.Add(settingPanelAppAutoUpdateCheckCheckbox, flag=wx.ALL, border=5)
+
+	settingPanelEventAutoloadPanel.SetSizer(settingPanelEventAutoloadLayout)
+
+	# 設定保存ボタン (親: pagePanelSetting)
+	settingPanelSaveButton = wx.Button(pagePanelSetting, wx.ID_ANY, "設定を保存する")
+	settingPanelSaveButton.Bind(wx.EVT_BUTTON, saveConfig)
+	
+	# 設定ページレイアウト (親: pagePanelSetting)
+	settingPanelLayout = wx.BoxSizer(wx.VERTICAL)
+	settingPanelLayout.Add(settingPanelEventAutoloadPanel, flag=wx.EXPAND | wx.ALL, border=10)
+	settingPanelLayout.Add(settingPanelSaveButton, flag=wx.ALIGN_RIGHT | wx.RIGHT, border=10)
+
+	pagePanelSetting.SetSizer(settingPanelLayout)
+
+	# 設定ページ (ここまで)
+
+	# 設定項目自動読み込み
+	if config["Settings"]["EventAutoload"].lower() == "true":
+		settingPanelEventAutoloadCheckbox.SetValue(True)
+	else:
+		settingPanelEventAutoloadCheckbox.SetValue(False)
+	if config["Settings"]["AppUpdateCheck"].lower() == "true":
+		settingPanelAppAutoUpdateCheckCheckbox.SetValue(True)
+	else:
+		settingPanelAppAutoUpdateCheckCheckbox.SetValue(False)
+
+	notebook.InsertPage(0, pagePanelCalc, "計算")
+	notebook.InsertPage(1, pagePanelSetting, "設定")
+	notebook.InsertPage(2, pagePanelAbout, "このアプリについて")
 
 	icon = wx.Icon(resourcePath('logo.ico'), wx.BITMAP_TYPE_ICO)
 	frame.SetIcon(icon)
 
+	# イベント自動取得設定確認
+	if config["Settings"]["EventAutoload"].lower() == "true":
+		reloadNowEventInfoShow(None)
+	if config["Settings"]["AppUpdateCheck"].lower() == "true":
+		updateCheck()
+	
 	frame.Show()
 	app.MainLoop()
