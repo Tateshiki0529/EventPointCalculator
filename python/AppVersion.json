@@ -1,0 +1,10 @@
+{
+	"Version": {
+		"WindowsApp": {
+			"AppVersion": "1.1.0"
+		}
+	},
+	"UpdateURL": {
+		"WindowsApp": "https://github.com/Tateshiki0529/EventPointCalculator/releases/tag/1.0.0-wa"
+	}
+}
