@@ -3,7 +3,7 @@ from distutils.version import LooseVersion
 from requests import get
 
 versusContPointList = [60, 52, 44, 37, 30]
-APPVERSION = "2.1.0"
+APPVERSION = "2.1.1"
 lastUpdated = 0
 eventTypeList = {
 	"challenge_live": "チャレンジライブイベント",
@@ -211,7 +211,7 @@ def resourcePath(path):
 def loadConfig():
 	if (os.path.isfile(".\\EventPointCalculator.ini")):
 		config = configparser.ConfigParser()
-		config.read("./EventPointCalculator.ini")
+		config.read(".\\EventPointCalculator.ini")
 		return config
 	else:
 		wx.MessageBox(u"コンフィグファイルがありません。自動作成します。", u"EventPointCalculator")
@@ -222,6 +222,10 @@ def loadConfig():
 
 		with open(".\\EventPointCalculator.ini", "w") as f:
 			config.write(f)
+		
+		config = configparser.ConfigParser()
+		config.read(".\\EventPointCalculator.ini")
+		return config
 
 def saveConfig(e):
 	config = configparser.RawConfigParser()
@@ -560,14 +564,18 @@ if __name__ == "__main__":
 	# 設定ページ (ここまで)
 
 	# 設定項目自動読み込み
-	if config["Settings"]["EventAutoload"].lower() == "true":
+	if config is None:
 		settingPanelEventAutoloadCheckbox.SetValue(True)
-	else:
-		settingPanelEventAutoloadCheckbox.SetValue(False)
-	if config["Settings"]["AppUpdateCheck"].lower() == "true":
-		settingPanelAppAutoUpdateCheckCheckbox.SetValue(True)
-	else:
 		settingPanelAppAutoUpdateCheckCheckbox.SetValue(False)
+	else:
+		if config["Settings"]["EventAutoload"].lower() == "true":
+			settingPanelEventAutoloadCheckbox.SetValue(True)
+		else:
+			settingPanelEventAutoloadCheckbox.SetValue(False)
+		if config["Settings"]["AppUpdateCheck"].lower() == "true":
+			settingPanelAppAutoUpdateCheckCheckbox.SetValue(True)
+		else:
+			settingPanelAppAutoUpdateCheckCheckbox.SetValue(False)
 
 	notebook.InsertPage(0, pagePanelCalc, "計算")
 	notebook.InsertPage(1, pagePanelSetting, "設定")
