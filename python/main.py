@@ -3,7 +3,7 @@ from distutils.version import LooseVersion
 from requests import get
 
 versusContPointList = [60, 52, 44, 37, 30]
-APPVERSION = "2.0.0"
+APPVERSION = "2.1.0"
 lastUpdated = 0
 eventTypeList = {
 	"challenge_live": "チャレンジライブイベント",
@@ -18,13 +18,16 @@ eventTypeIndexList = {
 	"mission_live": 3
 }
 
-def updateCheck():
+def updateCheck(e):
 	url = "https://raw.githubusercontent.com/Tateshiki0529/EventPointCalculator/main/AppVersion.json"
 	versionData = get(url).json()
 	if LooseVersion(APPVERSION) < LooseVersion(versionData["Version"]["WindowsApp"]):
 		ret = wx.MessageBox(u"アプリのアップデートがあります。\n\n現在のアプリのバージョン: "+APPVERSION+"\n最新のバージョン: "+versionData["Version"]["AppVersion"]+"\n\nアップデートリリースページへアクセスしますか？", u"EventPointCalculator", wx.YES_NO)
 		if ret == wx.YES:
 			webbrowser.open(versionData["UpdateURL"]["WindowsApp"])
+	else:
+		if e is not None:
+			wx.MessageBox(u"利用中のバージョン("+APPVERSION+")は最新です。", u"EventPointCalculator")
 
 def reloadNowEventInfo():
 	global lastUpdated
@@ -86,6 +89,7 @@ def selectLiveType(e):
 
 def calculate(e):
 	eventType = calcPanelEventTypeListbox.GetClientData(calcPanelEventTypeListbox.GetSelection())
+	itemEmpty = False
 
 	if eventType == "challenge":
 		try:
@@ -100,6 +104,7 @@ def calculate(e):
 				scoreMax = scoreMin + 24999
 			resultPanelCalcOutput.SetValue("{:,}".format(scoreMin)+" ～ "+"{:,}".format(scoreMax))
 		except wx._core.wxAssertionError:
+			itemEmpty = True
 			resultPanelCalcOutput.SetValue("入力が不足しています")
 	elif eventType == "versus":
 		try:
@@ -109,6 +114,7 @@ def calculate(e):
 			scoreMax = scoreMin + 5499
 			resultPanelCalcOutput.SetValue("{:,}".format(scoreMin)+" ～ "+"{:,}".format(scoreMax))
 		except wx._core.wxAssertionError:
+			itemEmpty = True
 			resultPanelCalcOutput.SetValue("入力が不足しています")
 	elif eventType == "livetry":
 		try:
@@ -117,6 +123,7 @@ def calculate(e):
 			scoreMax = scoreMin + 12999
 			resultPanelCalcOutput.SetValue("{:,}".format(scoreMin)+" ～ "+"{:,}".format(scoreMax))
 		except wx._core.wxAssertionError:
+			itemEmpty = True
 			resultPanelCalcOutput.SetValue("入力が不足しています")
 	elif eventType == "mission":
 		try:
@@ -126,8 +133,9 @@ def calculate(e):
 			scoreMax = scoreMin + 9999
 			resultPanelCalcOutput.SetValue("{:,}".format(scoreMin)+" ～ "+"{:,}".format(scoreMax))
 		except wx._core.wxAssertionError:
+			itemEmpty = True
 			resultPanelCalcOutput.SetValue("入力が不足しています")
-	if scoreMax < 0:
+	if itemEmpty == False and scoreMax < 0:
 		resultPanelCalcOutput.AppendText(" (調整不可)")
 def eventPanelVisibleToggle(eventType):
 	calcPanelChallengeEventPanel.Hide()
@@ -509,6 +517,11 @@ if __name__ == "__main__":
 	pagePanelAboutLayout.Add(aboutPanelUrlTextTwitter, flag=wx.ALIGN_CENTER, border=3)
 	pagePanelAboutLayout.Add(wx.StaticText(pagePanelAbout, wx.ID_ANY, ""))
 	pagePanelAboutLayout.Add(aboutPanelUrlTextWeb, flag=wx.ALIGN_CENTER, border=3)
+	pagePanelAboutLayout.Add(wx.StaticText(pagePanelAbout, wx.ID_ANY, ""))
+
+	aboutPanelUpdateCheckButton = wx.Button(pagePanelAbout, wx.ID_ANY, "更新を確認する")
+	aboutPanelUpdateCheckButton.Bind(wx.EVT_BUTTON, updateCheck)
+	pagePanelAboutLayout.Add(aboutPanelUpdateCheckButton, flag=wx.ALIGN_RIGHT | wx.ALL, border=5)
 	pagePanelAbout.SetSizer(pagePanelAboutLayout)
 
 	# 概要ページ (ここまで)
@@ -567,7 +580,7 @@ if __name__ == "__main__":
 	if config["Settings"]["EventAutoload"].lower() == "true":
 		reloadNowEventInfoShow(None)
 	if config["Settings"]["AppUpdateCheck"].lower() == "true":
-		updateCheck()
+		updateCheck(None)
 	
 	frame.Show()
 	app.MainLoop()
