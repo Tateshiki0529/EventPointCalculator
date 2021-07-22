@@ -3,6 +3,7 @@ function allHide() {
 	$("#type_Versus").hide();
 	$("#type_Try").hide();
 	$("#type_Mission").hide();
+	$("#type_TeamLive").hide();
 	$("#divide_input").hide();
 }
 
@@ -24,11 +25,15 @@ function selectType() {
 			allHide();
 			$("#type_Mission").show();
 			break;
+		case 'teams':
+			allHide();
+			$("#type_TeamLive").show();
+			break;
 	}
 	$("#divide_input").show();
 }
 
-function calc_PtS(type, liveType = null, p = NaN, P = NaN, C = NaN) {
+function calc_PtS(type, liveType = null, p = NaN, P = NaN, C = NaN, R = NaN) {
 	switch(type) {
 		case "challenge":
 			if (liveType == null || liveType == "free") {
@@ -48,6 +53,9 @@ function calc_PtS(type, liveType = null, p = NaN, P = NaN, C = NaN) {
 			break;
 		case "mission":
 			var result = (p - 40 - Math.floor(P / 3000)) * 10000;
+			break;
+		case "teams":
+			var result = (p - C - 20 - (50 * R)) * 5500;
 			break;
 		default:
 			return false;
@@ -122,6 +130,20 @@ function calc(type) {
 				divideCheck();
 			}
 			break;
+		case "teams":
+			var point = parseInt($("#teams_Point").val());
+			var contributePoint = parseInt($("#teams_ContributePoint").val());
+			var WoL = parseInt($("#teams_WoL").val());
+			var result = calc_PtS("teams", null, point, NaN, contributePoint, WoL);
+			if(result + 5499 <= 0) {
+				$("#calc_Result").val("調整不可 (必要pt: "+result.toLocaleString()+" ～ "+(result+5499).toLocaleString()+")");
+			} else if(isNaN(result)) {
+				$("#calc_Result").val("入力が不足しています");
+			} else {
+				$("#calc_Result").val(result.toLocaleString()+" ～ "+(result+5499).toLocaleString());
+				divideCheck();
+			}
+			break;
 	}
 }
 
@@ -171,6 +193,52 @@ function changePlayerCount() {
 	calc("versus");
 }
 
+function changePlayerCountForTeams() {
+	var playerCount = parseInt($("#teams_ParticipatePlayerCount").val());
+	var rank = parseInt($("#teams_YourRank").val());
+	switch(playerCount) {
+		case 2:
+			$("#teams_YourRank > option").remove();
+			for(i=1;i<3;i++) {
+				$("#teams_YourRank").append($("<option>").html(String(i)+"位").val(String(i)));
+			}
+			$("#teams_YourRank option[value="+String(rank)+"]").prop("selected", true);
+			var rank = parseInt($("#teams_YourRank").val());
+			var pointList = [42, 40];
+			break;
+		case 3:
+			$("#teams_YourRank > option").remove();
+			for(i=1;i<4;i++) {
+				$("#teams_YourRank").append($("<option>").html(String(i)+"位").val(String(i)));
+			}
+			$("#teams_YourRank option[value="+String(rank)+"]").prop("selected", true);
+			var rank = parseInt($("#teams_YourRank").val());
+			var pointList = [44, 42, 40];
+			break;
+		case 4:
+			$("#teams_YourRank > option").remove();
+			for(i=1;i<5;i++) {
+				$("#teams_YourRank").append($("<option>").html(String(i)+"位").val(String(i)));
+			}
+			$("#teams_YourRank option[value="+String(rank)+"]").prop("selected", true);
+			var rank = parseInt($("#teams_YourRank").val());
+			var pointList = [47, 44, 42, 40];
+			break;
+		case 5:
+			$("#teams_YourRank > option").remove();
+			for(i=1;i<6;i++) {
+				$("#teams_YourRank").append($("<option>").html(String(i)+"位").val(String(i)));
+			}
+			$("#teams_YourRank option[value="+String(rank)+"]").prop("selected", true);
+			var rank = parseInt($("#teams_YourRank").val());
+			var pointList = [50, 47, 44, 42, 40];
+			break;
+	}
+	var contributePoint = pointList[rank - 1];
+	$("#teams_ContributePoint").val(contributePoint);
+	calc("teams");
+}
+
 function divideCheck() {
 	var totalPoint = parseInt($("#"+$("#eventType").val()+"_Point").val());
 	var oneTimePoint = Math.floor(totalPoint / parseInt($("#divideCount").val()));
@@ -214,6 +282,13 @@ function divideCheck() {
 				var power = parseInt($("#mission_SBPower").val());
 				var result = calc_PtS("mission", null, value, power);
 				var resMax = result + 9999;
+				break;
+			case "teams":
+				var point = parseInt($("#teams_Point").val());
+				var contributePoint = parseInt($("#teams_ContributePoint").val());
+				var WoL = parseInt($("#teams_WoL").val());
+				var result = calc_PtS("teams", null, value, NaN, contributePoint, WoL);
+				var resMax = result + 5499;
 				break;
 		}
 		totalPointBuf -= value;
