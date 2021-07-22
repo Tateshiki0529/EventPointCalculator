@@ -94,6 +94,10 @@
 						<ul>
 							<li>システムをまるっと独自ドメインとしてサービス化しました！ブックマークして使ってね！<br><br><a href="https://gbp.epcalc.ml/">EventPointCalculator</a></li>
 						</ul>
+						<li>チームライブフェスイベント対応！</li>
+						<ul>
+							<li>新しく開催されたチームライブフェスイベントに対応しました！「計算式」の項目にクレジットあり〼<br><a href="https://github.com/Tateshiki0529/EventPointCalculator/commit/f9664845ed7abbbba1b621002ecaf192f3591090" target="_blank">Commit #f966484</a></li>
+						</ul>
 					</ol>
 				</div>
 				<div class="col-sm-6 border border-dark rounded p-3">
@@ -110,7 +114,8 @@
 									"challenge_live" => "チャレンジライブイベント",
 									"vs_live" => "対バンライブイベント",
 									"live_goals" => "ライブトライ！イベント",
-									"mission_live" => "ミッションライブイベント"
+									"mission_live" => "ミッションライブイベント",
+									"normal" => "チームライブフェスイベント" // TODO: 要修正
 								];
 							?>
 							イベント期間: <?=$startDate->format("Y/m/d(D.) H:i");?> ～ <?=$endDate->format("Y/m/d(D.) H:i");?><br>
@@ -129,6 +134,7 @@
 							<option value="versus"<?=($eventTypeActive == "vs_live")?" selected":"";?>>対バンライブイベント</option>
 							<option value="try"<?=($eventTypeActive == "live_goals")?" selected":"";?>>ライブトライ！イベント</option>
 							<option value="mission"<?=($eventTypeActive == "mission_live")?" selected":"";?>>ミッションライブイベント</option>
+							<option value="teams"<?=($eventTypeActive == "normal")?" selected":"";?>>チームライブフェスイベント</option>
 						</select>
 					</div>
 					<div id="type_Challenge">
@@ -187,6 +193,39 @@
 						<div class="form-inline m-2 border border-primary rounded p-3">
 							<label for="mission_SBPower" class="d-inline">サポートバンド総合力($P$):&nbsp;</label>
 							<input type="number" id="mission_SBPower" placeholder="200000" class="form-control" onKeyUp="JavaScript:calc('mission');" onChange="JavaScript:calc('mission');" inputmode="numeric" pattern="[0-9]+" min="0" />
+						</div>
+					</div>
+					<div id="type_TeamLive">
+						<hr>
+						<div class="form-inline mb-5">
+							<label for="teams_Point" class="d-inline">欲しいイベントポイント数($p$):&nbsp;</label>
+							<input type="number" id="teams_Point" placeholder="300" class="form-control" onKeyUp="JavaScript:calc('teams');" onChange="JavaScript:calc('teams'); inputmode="numeric" pattern="[0-9]+" min="0" />
+						</div>
+						<div class="form-inline mb-5">
+							<label for="teams_WoL" class="d-inline">ライブ結果($R$):&nbsp;</label>
+							<select id="teams_WoL" onChange="JavaScript:calc('teams');" class="mr-3 form-control">
+								<option value="1" selected>勝ち</option>
+								<option value="0">負け</option>
+							</select>&nbsp;
+						</div>
+						<div class="form-inline m-2 border border-primary rounded p-3">
+							<label for="teams_ParticipatePlayerCount">参加人数:&nbsp;</label>
+							<select id="teams_ParticipatePlayerCount" onChange="JavaScript:changePlayerCountForTeams()" class="mr-3 form-control">
+								<option value="2">2人</option>
+								<option value="3">3人</option>
+								<option value="4">4人</option>
+								<option value="5" selected>5人</option>
+							</select>&nbsp;
+							<label for="teams_YourRank">あなたの貢献度ランキング:&nbsp;</label>
+							<select id="teams_YourRank" onChange="JavaScript:changePlayerCountForTeams()" class="form-control">
+								<option value="1" selected>1位</option>
+								<option value="2">2位</option>
+								<option value="3">3位</option>
+								<option value="4">4位</option>
+								<option value="5">5位</option>
+							</select>
+							<label for="teams_ContributePoint" class="d-inline">貢献度ポイント($C$):&nbsp;</label>
+							<input type="number" id="teams_ContributePoint" value="50" class="form-control" disabled />
 						</div>
 					</div>
 					<div class="result_form">
@@ -314,6 +353,59 @@
 							$p$ … 欲しいイベントポイント<br>
 							$P$ … サポートバンド総合力<br><br>
 							※フリーライブ、特攻キャラ(イベントタイプ・イベントキャラに当てはまらないカード)・ブースト無し時の数値
+						</p>
+					</div>
+					<div class="border m-1 p-2 border border-primary rounded" style="border-style: dotted !important;">
+						<h4>チームライブフェスイベント <span class="badge badge-danger">NEW!</span></h4>
+						<p>
+							\[
+								S=(p-C-\bm{\underline{20}}-R)\times5500
+							\]
+							$S$ … 獲得すべきライブスコア<br>
+							$p$ … 欲しいイベントポイント<br>
+							$C$ … 貢献度ポイント<br>
+							$R$ … 結果定数<br><br>
+							※チームライブ、ブースト無し時の数値<br>
+							※$R$ … <span class="alert-primary p-1 rounded">勝利した場合 = $\bm{\underline{50}}$</span>, <span class="alert-danger p-1 rounded">敗北した場合 = $\bm{\underline{0}}$</span><br>
+							※貢献度ランキングによる定数$C$一覧:
+						</p>
+						<table class="table table-bordered">
+							<thead class="table-dark">
+								<tr>
+									<th>貢献度ランキング</th>
+									<th>貢献度ポイント($C$の値)</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<th>1位</th>
+									<td>50pts</td>
+								</tr>
+								<tr>
+									<th>2位</th>
+									<td>47pts</td>
+								</tr>
+								<tr>
+									<th>3位</th>
+									<td>44pts</td>
+								</tr>
+								<tr>
+									<th>4位</th>
+									<td>42pts</td>
+								</tr>
+								<tr>
+									<th>5位</th>
+									<td>40pts</td>
+								</tr>
+							</tbody>
+						</table>
+						<p>
+							ただし参加人数によって$C$の最大が変動する(3人の場合、3,4,5位のスコアが適用される)<br>
+							<br>
+							この法則を見つけ、Twitterで公開して下さった <a href="https://twitter.com/HanaYoshiko__" target="_blank"><i class="fab fa-twitter"></i> ＊はなよしこ＊(@HanaYoshiko__) <i class="fas fa-external-link-alt"></i></a> さん、ありがとうございました！<br>
+							この場をお借りしてお礼申し上げます。<br>
+							<br>
+							<a href="https://twitter.com/HanaYoshiko__/status/1417841833212727297" target="_blank"><i class="fab fa-twitter"></i> 該当ツイート <i class="fas fa-external-link-alt"></i></a>
 						</p>
 					</div>
 					<p>※ブーストの$n$倍には小数計算も含まれるため、イベントポイント調整には不適</p>
